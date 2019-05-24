@@ -7,42 +7,60 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
+var Main = require('./Main')
 cc.Class({
     extends: cc.Component,
 
-    properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
-    },
+    properties: { },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this.node.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
-            this.opacity = 100;
-            var delta = event.touch.getDelta();
-            this.x += delta.x;
-            this.y += delta.y;
-            
-        }, this.node);
-        this.node.on(cc.Node.EventType.TOUCH_END, function () {
-            this.opacity = 255;
-            console.log(this.name)
-        }, this.node);
+        
+        var self = this;
+        var isMove = false;
+        let ansBox = Main._instance.answer_to
+        var rect_a = new cc.Rect(ansBox.x , ansBox.y , ansBox.width, ansBox.height)
+        
+        let originalVec2 = null
+        let zindex = null
+        this.node.on(cc.Node.EventType.TOUCH_START, function(event){
+            isMove = true;
+            originalVec2 = self.node.position
+            zindex = self.node.zindex
+            self.node.zIndex = 999;
+            self.node.on(cc.Node.EventType.TOUCH_MOVE, function(event){
+                if(isMove){
+                    self.node.x += event.getDelta().x
+                    self.node.y += event.getDelta().y
+                    let _selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
+                    
+                    if(rect_a.containsRect(_selfRect)) {
+                        console.log('moev')
+                        isMove = false;
+                    }
+                }
+                event.stopPropagation();
+            }, self.node)
+        }, this.node)
+        this.node.on(cc.Node.EventType.TOUCH_END, ()=> {
+            if(isMove) {
+                // self.node.setPosition(originalVec2)
+                self.node.runAction(cc.moveTo(0.2, originalVec2))
+                self.node.zIndex = zindex;
+            }
+            isMove = false;
+            self.node.off(cc.Node.EventType.TOUCH_MOVE);
+        }, this.node)
+        this.node.on(cc.Node.EventType.TOUCH_CANCEL, ()=> {
+            if(isMove){
+                self.node.runAction(cc.moveTo(0.2, originalVec2))
+                // self.node.setPosition(originalVec2)
+                self.node.zIndex = zindex;
+            }
+            isMove = false;
+            self.node.off(cc.Node.EventType.TOUCH_MOVE);
+        }, this.node)
     },
 
     start () {

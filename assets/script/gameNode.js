@@ -9,8 +9,8 @@
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 var http = require('../utils/CusHttp')
 
-let gameNode = cc.Class({
-    statics: {
+var gameNode = cc.Class({
+    statics : {
         _instance: null
     },
     extends: cc.Component,
@@ -112,6 +112,4 @@ let gameNode = cc.Class({
     }
 
     // update (dt) {},
-});
-
-module.exports = gameNode
+})

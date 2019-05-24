@@ -10,15 +10,18 @@
 var gameNode = require('./gameNode')
 var utils = require('../utils/index')
 
-cc.Class({
+var Main = cc.Class({
     extends: cc.Component,
+    statics : {
+        _instance: null
+    },
     properties: {
         gameNode: {
             type: gameNode,
             default: null
         },
-        answer_a: {
-            type: cc.Sprite,
+        answer_to: {
+            type: cc.Node,
             default: null
         },
         answerNode: {
@@ -28,7 +31,9 @@ cc.Class({
         answer: {
             type: [cc.Sprite],
             default: []
-        }
+        },
+        quesList: [],
+        curQues: 0,
         // foo: {
         //     // ATTRIBUTES:
         //     default: null,        // The default value will be used only when the component attaching
@@ -48,13 +53,25 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    onLoad () {
+        Main._instance = this;
+        this.answerNode = this.node.getChildByName('answer').children
+        this.answer_to = this.node.getChildByName('ques-box')
+        this.answer = this.answerNode.map(c => c.children[0].getComponent(cc.Sprite))
+        // 初始化问题
+        this.quesList = this.gameNode.getQuesList()
+    },
 
     start () {
-        this.answerNode = this.node.getChildByName('answer').children
-        this.answer = this.answerNode.map(c => c.children[0].getComponent(cc.Sprite))
-        console.log(this.answer);
+       
+        this.initQuestion()
+    },
+
+    initQuestion() {
+        console.log('quest', this.quesList)
         
+        // 初始化问题选择位置
+        this.randomPos()
     },
 
     randomPos() {
