@@ -1,0 +1,25 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "yun",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 7.5,
+  "sample": 24,
+  "speed": 0.2,
+  "wrapMode": 2,
+  "curveData": {
+    "props": {
+      "x": [
+        {
+          "frame": 0,
+          "value": 886.999
+        },
+        {
+          "frame": 7.5,
+          "value": -822.177
+        }
+      ]
+    }
+  },
+  "events": []
+}

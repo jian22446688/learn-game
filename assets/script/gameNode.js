@@ -11,7 +11,7 @@ var http = require('../utils/CusHttp')
 
 let gameNode = cc.Class({
     statics: {
-        instance: null
+        _instance: null
     },
     extends: cc.Component,
     properties: {
@@ -21,7 +21,8 @@ let gameNode = cc.Class({
         gameQues: { type: Object, default: null },
         currentQues: { type: Object, default: null },
         // 所有的按钮音效
-        au_btn_sound: { type: cc.AudioClip, default: null },
+        au_btn_Clip: { type: cc.AudioClip, default: null },
+        au_btn_sound: { type: cc.AudioSource, default: null },
         // btn 音效 id 所有的音效都从这里播放
         au_id_btn: { default: null, visible: false },
         // question 所有的 问题音效都从这里播放
@@ -33,6 +34,7 @@ let gameNode = cc.Class({
         cc.game.addPersistRootNode(this.node)
         console.log('game-config', this.gameConfig.json);
         
+        
         // new http().Get('http://' + location.host + '/json/game-question.json', (res)=> {
         //     console.log(res);
         //    this.questionList = res.data
@@ -40,12 +42,15 @@ let gameNode = cc.Class({
 
         // 本地获取
         this.questionList = this.gameQuestion.json
-
+        
         // 初始化问题数据
         this.gameQues = this.getGameQues(this.questionList)
+        console.log('game-quest', this.gameQues);
     },
 
-    start () { },
+    start () {
+        this.au_btn_sound = this.getComponent(cc.AudioSource)
+     },
     // 获取游戏的所有问题
     getGameQues(list) { // gid = '001'
         let gid = this.gameConfig.json.game_id
@@ -70,10 +75,7 @@ let gameNode = cc.Class({
     },
     // 播放所有需要播放的按钮音效
     auBtnPlay () {
-        if(this.au_btn_sound) {
-            cc.audioEngine.stop(this.au_id_btn);
-            this.au_id_btn = cc.audioEngine.play(this.au_btn_sound, false);
-        }
+        this.au_btn_sound.play()
     },
     // 播放所有问题的音效 res: 'main/au_help.mp3'
     auQuesPlay (audioname) {
@@ -111,3 +113,5 @@ let gameNode = cc.Class({
 
     // update (dt) {},
 });
+
+module.exports = gameNode
