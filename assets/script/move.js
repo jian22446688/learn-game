@@ -10,18 +10,13 @@
 var Main = require('./Main')
 cc.Class({
     extends: cc.Component,
-
     properties: { },
-
     // LIFE-CYCLE CALLBACKS:
-
     onLoad () {
-        
         var self = this;
         var isMove = false;
         let ansBox = Main._instance.answer_to
-        var rect_a = new cc.Rect(ansBox.x , ansBox.y , ansBox.width, ansBox.height)
-        
+        var rect_a = new cc.Rect(ansBox.x, ansBox.y , ansBox.width + 20, ansBox.height +20)
         let originalVec2 = null
         let zindex = null
         this.node.on(cc.Node.EventType.TOUCH_START, function(event){
@@ -29,15 +24,18 @@ cc.Class({
             originalVec2 = self.node.position
             zindex = self.node.zindex
             self.node.zIndex = 999;
+            let btnsEvent =  new cc.Event.EventCustom('on-queset-start', true)
+            self.node.dispatchEvent(btnsEvent);
             self.node.on(cc.Node.EventType.TOUCH_MOVE, function(event){
                 if(isMove){
                     self.node.x += event.getDelta().x
                     self.node.y += event.getDelta().y
                     let _selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
-                    
                     if(rect_a.containsRect(_selfRect)) {
-                        console.log('moev')
                         isMove = false;
+                        console.log('moev')
+                        let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
+                        self.node.dispatchEvent(btnsEvent);
                     }
                 }
                 event.stopPropagation();
@@ -50,6 +48,8 @@ cc.Class({
                 self.node.zIndex = zindex;
             }
             isMove = false;
+            let btnsEvent =  new cc.Event.EventCustom('on-queset-end', true)
+            self.node.dispatchEvent(btnsEvent);
             self.node.off(cc.Node.EventType.TOUCH_MOVE);
         }, this.node)
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, ()=> {
@@ -59,6 +59,8 @@ cc.Class({
                 self.node.zIndex = zindex;
             }
             isMove = false;
+            let btnsEvent =  new cc.Event.EventCustom('on-queset-end', true)
+            self.node.dispatchEvent(btnsEvent);
             self.node.off(cc.Node.EventType.TOUCH_MOVE);
         }, this.node)
     },

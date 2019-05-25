@@ -31,21 +31,21 @@ var gameNode = cc.Class({
 
     onLoad () {
         gameNode._instance = this
+        window.c_GameNode = this
         cc.game.addPersistRootNode(this.node)
-        console.log('game-config', this.gameConfig.json);
-        
+        new http().Get('/json/game-question.json', (res)=> {
+            console.log(res);
+        //    this.questionList = res.data
+        })
         
         // new http().Get('http://' + location.host + '/json/game-question.json', (res)=> {
         //     console.log(res);
         //    this.questionList = res.data
         // })
-
         // 本地获取
         this.questionList = this.gameQuestion.json
-        
         // 初始化问题数据
         this.gameQues = this.getGameQues(this.questionList)
-        console.log('game-quest', this.gameQues);
     },
 
     start () {

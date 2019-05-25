@@ -12,12 +12,16 @@ var utils = require('../utils/index')
 
 var Main = cc.Class({
     extends: cc.Component,
-    statics : {
+    statics: {
         _instance: null
     },
     properties: {
         gameNode: {
             type: gameNode,
+            default: null
+        },
+        QuestImage: {
+            type: cc.Sprite,
             default: null
         },
         answer_to: {
@@ -33,7 +37,8 @@ var Main = cc.Class({
             default: []
         },
         quesList: [],
-        curQues: 0,
+        curQuestion: null,
+        curQuesNumber: 0,
         // foo: {
         //     // ATTRIBUTES:
         //     default: null,        // The default value will be used only when the component attaching
@@ -49,11 +54,31 @@ var Main = cc.Class({
         //         this._bar = value;
         //     }
         // },
+
+        // {
+        //     "other": "",
+        //     "id": "1",
+        //     "game_id": "001",
+        //     "level": "",
+        //     "question": "audio/a_book",
+        //     "question_text": "a book",
+        //     "question_type": "audio",
+        //     "select_type": "image",
+        //     "answer": "a",
+        //     "select_a": "image/book_picture_1",
+        //     "a_text": "",
+        //     "select_b": "image/crayon_picture_1",
+        //     "b_text": "",
+        //     "select_c": "image/pencil_picture_1",
+        //     "c_text": "",
+        //     "select_d": "",
+        //     "d_text": ""
+        // }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad () {
+    onLoad() {
         Main._instance = this;
         this.answerNode = this.node.getChildByName('answer').children
         this.answer_to = this.node.getChildByName('ques-box')
@@ -62,16 +87,59 @@ var Main = cc.Class({
         this.quesList = this.gameNode.getQuesList()
     },
 
-    start () {
-       
+    start() {
         this.initQuestion()
+
+        // 拖动物体移动, 回答问题
+        this.node.on('on-queset-move', event => {
+            let selectAns = event.target.name
+            let answer = this.curQuestion.answer
+            if (selectAns.toLowerCase() === answer.toLowerCase()) {
+                // todo Correct answer
+            } else {
+                // todo Error answer
+            }
+            if (this.curQuesNumber < this.quesList.length - 1) {
+                // todo Answer completed
+            }
+            event.target.active = false
+        })
+
+        // 拖动物体开始
+        this.node.on('on-queset-start', event => {
+
+        })
+        // 拖动物体结束
+        this.node.on('on-queset-end', event => {
+
+        })
     },
 
-    initQuestion() {
+    initQuestion(id = 0) {
         console.log('quest', this.quesList)
-        
+        this.curQuestion = this.quesList[id]
+        this.gameNode.setQuesSprite(this.answer[0], this.curQuestion.select_a)
+        this.gameNode.setQuesSprite(this.answer[1], this.curQuestion.select_b)
+        this.gameNode.setQuesSprite(this.answer[2], this.curQuestion.select_c)
+        this.initQ()
         // 初始化问题选择位置
         this.randomPos()
+    },
+
+    initQ() {
+        // 初始化问题 数据
+        if (this.curQuestion) {
+            let ques = this.curQuestion.question
+            if (this.curQuestion.question_type === 'audio') {
+                this.gameNode.auQuesPlay(ques)
+            } else if (this.curQuestion.question_type === 'image') {
+                if (this.QuestImage) {
+                    this.gameNode.setQuesSprite(this.QuestImage, ques)
+                }
+            } else {
+
+            }
+        }
     },
 
     randomPos() {
@@ -98,24 +166,29 @@ var Main = cc.Class({
         }
     },
 
+    nextQuest() {
+        if (this.curQuesNumber + 1 < this.quesList.length) {
+            this.curQuesNumber++
+            this.initQuestion(this.curQuesNumber)
+        }
+    },
+
     onPlayQuestion() {
-        this.randomPos()
         this.gameNode.auBtnPlay()
-        let curQues = this.gameNode.getQuesList()
-        let audio = curQues[0].question
-        this.gameNode.auQuesPlay(audio)
+        if (this.curQuestion) {
+            let ques = this.curQuestion.question
+            if (this.curQuestion.question_type === 'audio') {
+                this.gameNode.auQuesPlay(ques)
+            } else if (this.curQuestion.question_type === 'image') {
+
+            } else {
+
+            }
+        }
     },
     onGameExit() {
         this.gameNode.auBtnPlay()
-        let curQues = this.gameNode.getQuesList()
-        this.gameNode.setQuesSprite(this.answer[0], curQues[0].select_a)
-        this.gameNode.setQuesSprite(this.answer[1], curQues[0].select_b)
-        this.gameNode.setQuesSprite(this.answer[2], curQues[0].select_c)
-        console.log(curQues)
-        this.randomPos()
-        console.log(this.answer[2].node.name);
-        
-
+        cc.game.end()
     }
     // update (dt) {},
 });
