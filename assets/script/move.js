@@ -33,7 +33,6 @@ cc.Class({
                     let _selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
                     if(rect_a.containsRect(_selfRect)) {
                         isMove = false;
-                        console.log('moev')
                         let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
                         self.node.dispatchEvent(btnsEvent);
                     }
@@ -67,7 +66,5 @@ cc.Class({
 
     start () {
 
-    },
-
-    // update (dt) {},
+    }
 });

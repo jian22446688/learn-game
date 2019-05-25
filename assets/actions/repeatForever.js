@@ -25,7 +25,8 @@ cc.Class({
   },
   start() {
      // 让节点左右来回移动并一直重复
-    var seq = cc.repeatForever(cc.moveTo(duration, this.moves))
+    // var seq = cc.repeatForever(cc.moveTo(this.duration, this.moves))
+    var seq = cc.repeat(cc.moveTo(this.duration, this.moves), 2)
     this.node.runAction(seq)
   }
 });

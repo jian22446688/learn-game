@@ -83,41 +83,54 @@ var Main = cc.Class({
         this.answerNode = this.node.getChildByName('answer').children
         this.answer_to = this.node.getChildByName('ques-box')
         this.answer = this.answerNode.map(c => c.children[0].getComponent(cc.Sprite))
+        this.answerPos = this.answerNode.map(c => JSON.parse(JSON.stringify(c.position)))
         // 初始化问题
         this.quesList = this.gameNode.getQuesList()
     },
 
     start() {
         this.initQuestion()
-
+        let self = this
         // 拖动物体移动, 回答问题
         this.node.on('on-queset-move', event => {
             let selectAns = event.target.name
+            selectAns = selectAns.substr(selectAns.lastIndexOf(), selectAns.length)
+            console.log('name', selectAns)
             let answer = this.curQuestion.answer
             if (selectAns.toLowerCase() === answer.toLowerCase()) {
                 // todo Correct answer
+                console.log('回答正确')
+                setTimeout(() => {
+                    this.nextQuest()
+                }, 1000)
             } else {
                 // todo Error answer
+                console.log('回答错误')
+                
+                setTimeout(() => {
+                    self.initQuestion(this.curQuesNumber)
+                }, 1000)
             }
-            if (this.curQuesNumber < this.quesList.length - 1) {
+            if (this.curQuesNumber === this.quesList.length - 1) {
                 // todo Answer completed
+                alert('回答完成')
             }
-            event.target.active = false
         })
 
         // 拖动物体开始
         this.node.on('on-queset-start', event => {
-
         })
         // 拖动物体结束
         this.node.on('on-queset-end', event => {
-
         })
     },
 
     initQuestion(id = 0) {
-        console.log('quest', this.quesList)
         this.curQuestion = this.quesList[id]
+        for (let index = 0; index < this.answerNode.length; index++) {
+            // this.answerNode[index].setPosition(this.answerPos[index])
+            this.answerNode[index].active = true
+        }
         this.gameNode.setQuesSprite(this.answer[0], this.curQuestion.select_a)
         this.gameNode.setQuesSprite(this.answer[1], this.curQuestion.select_b)
         this.gameNode.setQuesSprite(this.answer[2], this.curQuestion.select_c)
@@ -144,23 +157,24 @@ var Main = cc.Class({
 
     randomPos() {
         let rand = utils.getRandomNum(1, 3)
+        this.answerPos.sort(utils.randomsort)
         switch (rand) {
             case 1:
-                let node1 = this.answerNode[0].position
-                this.answerNode[0].position = this.answerNode[1].position
-                this.answerNode[1].position = this.answerNode[2].position
+                let node1 = this.answerPos[0]
+                this.answerNode[0].position = this.answerPos[1]
+                this.answerNode[1].position = this.answerPos[2]
                 this.answerNode[2].position = node1
                 break;
             case 2:
-                let node2 = this.answerNode[1].position
-                this.answerNode[1].position = this.answerNode[2].position
-                this.answerNode[2].position = this.answerNode[0].position
+                let node2 = this.answerPos[1]
+                this.answerNode[1].position = this.answerPos[2]
+                this.answerNode[2].position = this.answerPos[0]
                 this.answerNode[0].position = node2
                 break;
             case 3:
-                let node3 = this.answerNode[2].position
-                this.answerNode[2].position = this.answerNode[0].position
-                this.answerNode[0].position = this.answerNode[1].position
+                let node3 = this.answerPos[2]
+                this.answerNode[2].position = this.answerPos[0]
+                this.answerNode[0].position = this.answerPos[1]
                 this.answerNode[1].position = node3
                 break;
         }
@@ -171,6 +185,10 @@ var Main = cc.Class({
             this.curQuesNumber++
             this.initQuestion(this.curQuesNumber)
         }
+    },
+
+    onTestButton() {
+        console.log(this.gameNode)
     },
 
     onPlayQuestion() {
