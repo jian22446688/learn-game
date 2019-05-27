@@ -51,6 +51,10 @@ var Main = cc.Class({
             type: cc.AudioClip,
             default: null
         },
+        btn_next: {
+            type: cc.Node,
+            default: null
+        },
 
     },
 
@@ -95,9 +99,10 @@ var Main = cc.Class({
         })
         // 吃完了
         this.node.on('on-anim-zhengque-end', event => {
-            setTimeout(() => {
-                this.nextQuest()
-            }, 500)
+            // setTimeout(() => {
+            //     this.nextQuest()
+            // }, 500)
+            this.btn_next.active = true
             this.AnimateNode.node.scaleX = 1.115
             this.AnimateNode.play('daiji')
         })
@@ -124,6 +129,7 @@ var Main = cc.Class({
         this.randomPos()
         this.randomPos()
         this.randomPos()
+        this.btn_next.active = false
     },
     chiingEvent() {
         let selectAns = this._selectAns
@@ -191,6 +197,7 @@ var Main = cc.Class({
     nextQuest() {
         if (this.curQuesNumber + 1 < this.quesList.length) {
             this.curQuesNumber++
+            
             this.initQuestion(this.curQuesNumber)
         }
     },
