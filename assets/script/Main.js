@@ -28,6 +28,10 @@ var Main = cc.Class({
             type: cc.Node,
             default: null
         },
+        AnimateNode: {
+          type: cc.Animation,
+          default: null  
+        },
         answerNode: {
             type: [cc.Node],
             default: []
@@ -39,41 +43,15 @@ var Main = cc.Class({
         quesList: [],
         curQuestion: null,
         curQuesNumber: 0,
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
+        auZhengque: {
+            type: cc.AudioClip,
+            default: null
+        },
+        auCuowu: {
+            type: cc.AudioClip,
+            default: null
+        },
 
-        // {
-        //     "other": "",
-        //     "id": "1",
-        //     "game_id": "001",
-        //     "level": "",
-        //     "question": "audio/a_book",
-        //     "question_text": "a book",
-        //     "question_type": "audio",
-        //     "select_type": "image",
-        //     "answer": "a",
-        //     "select_a": "image/book_picture_1",
-        //     "a_text": "",
-        //     "select_b": "image/crayon_picture_1",
-        //     "b_text": "",
-        //     "select_c": "image/pencil_picture_1",
-        //     "c_text": "",
-        //     "select_d": "",
-        //     "d_text": ""
-        // }
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -81,7 +59,7 @@ var Main = cc.Class({
     onLoad() {
         Main._instance = this;
         this.answerNode = this.node.getChildByName('answer').children
-        this.answer_to = this.node.getChildByName('ques-box')
+        // this.answer_to = this.node.getChildByName('ques-box')
         this.answer = this.answerNode.map(c => c.children[0].getComponent(cc.Sprite))
         this.answerPos = this.answerNode.map(c => JSON.parse(JSON.stringify(c.position)))
         // 初始化问题
@@ -89,39 +67,46 @@ var Main = cc.Class({
     },
 
     start() {
+        // this._AnimateNode = this.answer_to.getComponent(cc.Animation)
+        console.log('anim', this._AnimateNode)
         this.initQuestion()
         let self = this
         // 拖动物体移动, 回答问题
         this.node.on('on-queset-move', event => {
-            let selectAns = event.target.name
-            selectAns = selectAns.substr(selectAns.lastIndexOf(), selectAns.length)
-            console.log('name', selectAns)
-            let answer = this.curQuestion.answer
-            if (selectAns.toLowerCase() === answer.toLowerCase()) {
-                // todo Correct answer
-                console.log('回答正确')
-                setTimeout(() => {
-                    this.nextQuest()
-                }, 1000)
-            } else {
-                // todo Error answer
-                console.log('回答错误')
-                
-                setTimeout(() => {
-                    self.initQuestion(this.curQuesNumber)
-                }, 1000)
-            }
-            if (this.curQuesNumber === this.quesList.length - 1) {
-                // todo Answer completed
-                alert('回答完成')
-            }
+            self._selectAns = event.target.name
+            this.AnimateNode.node.scaleX = 1.115
+            this.AnimateNode.play('chiing')
         })
 
         // 拖动物体开始
         this.node.on('on-queset-start', event => {
+            this.AnimateNode.node.scaleX = 1.215
+            this.AnimateNode.play('zhangzui')
         })
         // 拖动物体结束
         this.node.on('on-queset-end', event => {
+            this.AnimateNode.node.scaleX = 1.115
+            this.AnimateNode.play('daiji')
+        })
+        // 吃完了
+        this.node.on('on-anim-chiwan-end', event => {
+            // this._AnimateNode.play('daiji')
+            this.chiingEvent()
+        })
+        // 吃完了
+        this.node.on('on-anim-zhengque-end', event => {
+            setTimeout(() => {
+                this.nextQuest()
+            }, 500)
+            this.AnimateNode.node.scaleX = 1.115
+            this.AnimateNode.play('daiji')
+        })
+        this.node.on('on-anim-cuowu-end', event => {
+            setTimeout(() => {
+                self.initQuestion(this.curQuesNumber)
+            }, 500)
+            this.AnimateNode.node.scaleX = 1.115
+            this.AnimateNode.play('daiji')
         })
     },
 
@@ -137,8 +122,31 @@ var Main = cc.Class({
         this.initQ()
         // 初始化问题选择位置
         this.randomPos()
+        this.randomPos()
+        this.randomPos()
     },
-
+    chiingEvent() {
+        let selectAns = this._selectAns
+        selectAns = selectAns.substr(selectAns.lastIndexOf(), selectAns.length)
+        console.log('name', selectAns)
+        let answer = this.curQuestion.answer
+        if (selectAns.toLowerCase() === answer.toLowerCase()) {
+            // todo Correct answer
+            console.log('回答正确')
+            this.gameNode.auClipPlay(this.auZhengque)
+            this.AnimateNode.play('zhengque')
+        } else {
+            // todo Error answer
+            console.log('回答错误')
+            this.gameNode.auClipPlay(this.auCuowu)
+            this.AnimateNode.play('cuowu')
+        }
+       
+        if (this.curQuesNumber === this.quesList.length - 1) {
+            // todo Answer completed
+            alert('回答完成')
+        }
+    },
     initQ() {
         // 初始化问题 数据
         if (this.curQuestion) {

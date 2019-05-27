@@ -77,6 +77,10 @@ var gameNode = cc.Class({
             }
         })
     },
+    // 播放所有问题的音效 res: 'main/au_help.mp3'
+    auClipPlay (AudioClip) {
+        cc.audioEngine.play(AudioClip, false);
+    },
     // 停止播放 问题音效
     auQuesStop() {
         cc.audioEngine.stop(this.au_id_question);

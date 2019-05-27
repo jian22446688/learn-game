@@ -13,10 +13,14 @@ cc.Class({
     properties: { },
     // LIFE-CYCLE CALLBACKS:
     onLoad () {
+        
+    },
+
+    start () {
         var self = this;
         var isMove = false;
         let ansBox = Main._instance.answer_to
-        var rect_a = new cc.Rect(ansBox.x, ansBox.y , ansBox.width + 20, ansBox.height +20)
+        var rect_a = new cc.Rect(ansBox.x, ansBox.y, ansBox.width , ansBox.height)
         let originalVec2 = null
         let zindex = null
         this.node.on(cc.Node.EventType.TOUCH_START, function(event){
@@ -35,6 +39,7 @@ cc.Class({
                         isMove = false;
                         let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
                         self.node.dispatchEvent(btnsEvent);
+                        self.node.active = false
                     }
                 }
                 event.stopPropagation();
@@ -62,9 +67,5 @@ cc.Class({
             self.node.dispatchEvent(btnsEvent);
             self.node.off(cc.Node.EventType.TOUCH_MOVE);
         }, this.node)
-    },
-
-    start () {
-
     }
 });
