@@ -25,14 +25,7 @@ cc.Class({
             default: null
         },
     },
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {},
-
-    start () {
-
-    },
+    start () { },
     audaijiEvent(audio) {
         cc.audioEngine.play(this[audio], false);
     },
@@ -48,6 +41,4 @@ cc.Class({
         let btnsEvent =  new cc.Event.EventCustom('on-anim-cuowu-end', true)
         this.node.dispatchEvent(btnsEvent);
     }
-
-    // update (dt) {},
 });

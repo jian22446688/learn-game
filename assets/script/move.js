@@ -39,7 +39,8 @@ cc.Class({
                         isMove = false;
                         let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
                         self.node.dispatchEvent(btnsEvent);
-                        self.node.active = false
+                        // self.node.active = false
+                        self.node.x = 99999
                     }
                 }
                 event.stopPropagation();

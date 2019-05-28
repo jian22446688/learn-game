@@ -1,5 +1,6 @@
 {
     "name": "game",
     "game_id": "001",
-    "question_number": 5
+    "question_number": 5,
+    "resUrl": "/"
 }

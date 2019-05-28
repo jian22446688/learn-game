@@ -118,8 +118,8 @@ var Main = cc.Class({
     initQuestion(id = 0) {
         this.curQuestion = this.quesList[id]
         for (let index = 0; index < this.answerNode.length; index++) {
-            // this.answerNode[index].setPosition(this.answerPos[index])
-            this.answerNode[index].active = true
+            this.answerNode[index].setPosition(this.answerPos[index])
+            // this.answerNode[index].active = true
         }
         this.gameNode.setQuesSprite(this.answer[0], this.curQuestion.select_a)
         this.gameNode.setQuesSprite(this.answer[1], this.curQuestion.select_b)
