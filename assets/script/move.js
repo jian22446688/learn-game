@@ -32,16 +32,20 @@ cc.Class({
             self.node.dispatchEvent(btnsEvent);
             self.node.on(cc.Node.EventType.TOUCH_MOVE, function(event){
                 if(isMove){
+                   setTimeout(() => {
                     self.node.x += event.getDelta().x
                     self.node.y += event.getDelta().y
                     let _selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
                     if(rect_a.containsRect(_selfRect)) {
                         isMove = false;
+                        self.node.zIndex = zindex
+                        self.node.setPosition(originalVec2)
                         let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
                         self.node.dispatchEvent(btnsEvent);
-                        // self.node.active = false
-                        self.node.x = 99999
+                        self.node.active = false
+                        // self.node.x = 99999
                     }
+                   }, 10)
                 }
                 event.stopPropagation();
             }, self.node)

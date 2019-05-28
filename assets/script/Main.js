@@ -78,40 +78,37 @@ var Main = cc.Class({
         // 拖动物体移动, 回答问题
         this.node.on('on-queset-move', event => {
             self._selectAns = event.target.name
-            this.AnimateNode.node.scaleX = 1.115
-            this.AnimateNode.play('chiing')
+            self.AnimateNode.play('chiing')
         })
 
         // 拖动物体开始
         this.node.on('on-queset-start', event => {
-            this.AnimateNode.node.scaleX = 1.215
-            this.AnimateNode.play('zhangzui')
+            self.AnimateNode.play('zhangzui')
         })
         // 拖动物体结束
         this.node.on('on-queset-end', event => {
-            this.AnimateNode.node.scaleX = 1.115
             this.AnimateNode.play('daiji')
         })
         // 吃完了
         this.node.on('on-anim-chiwan-end', event => {
             // this._AnimateNode.play('daiji')
-            this.chiingEvent()
+            self.chiingEvent()
         })
         // 吃完了
         this.node.on('on-anim-zhengque-end', event => {
             // setTimeout(() => {
             //     this.nextQuest()
-            // }, 500)
+            // }, 1000)
             this.btn_next.active = true
-            this.AnimateNode.node.scaleX = 1.115
-            this.AnimateNode.play('daiji')
+            self.AnimateNode.play('daiji')
+            // this.AnimateNode.node.scale = 1.115
         })
         this.node.on('on-anim-cuowu-end', event => {
             setTimeout(() => {
                 self.initQuestion(this.curQuesNumber)
-            }, 500)
-            this.AnimateNode.node.scaleX = 1.115
-            this.AnimateNode.play('daiji')
+            }, 1000)
+            self.AnimateNode.play('daiji')
+            // this.AnimateNode.node.scale = 1.115
         })
     },
 
@@ -119,7 +116,7 @@ var Main = cc.Class({
         this.curQuestion = this.quesList[id]
         for (let index = 0; index < this.answerNode.length; index++) {
             this.answerNode[index].setPosition(this.answerPos[index])
-            // this.answerNode[index].active = true
+            this.answerNode[index].active = true
         }
         this.gameNode.setQuesSprite(this.answer[0], this.curQuestion.select_a)
         this.gameNode.setQuesSprite(this.answer[1], this.curQuestion.select_b)
@@ -203,7 +200,8 @@ var Main = cc.Class({
     },
 
     onTestButton() {
-        console.log(this.gameNode)
+        console.log('chiing')
+        this.AnimateNode.play('chiing')
     },
 
     onPlayQuestion() {

@@ -23,10 +23,10 @@ var gameNode = cc.Class({
     onLoad () {
         gameNode._instance = this
         cc.game.addPersistRootNode(this.node)
-        new http().Get('/json/game-question.json', (res) => {
-            console.log(res);
-        //    this.questionList = res.data
-        })
+        // new http().Get('/json/game-question.json', (res) => {
+        //     console.log(res);
+        // //    this.questionList = res.data
+        // })
         
         // new http().Get('http://' + location.host + '/json/game-question.json', (res)=> {
         //     console.log(res);
