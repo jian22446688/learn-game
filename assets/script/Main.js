@@ -118,6 +118,9 @@ var Main = cc.Class({
             this.answerNode[index].setPosition(this.answerPos[index])
             this.answerNode[index].active = true
         }
+        this.answer[0].scale = 0.97
+        this.answer[1].scale = 0.97
+        this.answer[2].scale = 0.97
         this.gameNode.setQuesSprite(this.answer[0], this.curQuestion.select_a)
         this.gameNode.setQuesSprite(this.answer[1], this.curQuestion.select_b)
         this.gameNode.setQuesSprite(this.answer[2], this.curQuestion.select_c)
@@ -140,11 +143,9 @@ var Main = cc.Class({
             this.AnimateNode.play('zhengque')
         } else {
             // todo Error answer
-            console.log('回答错误')
             this.gameNode.auClipPlay(this.auCuowu)
             this.AnimateNode.play('cuowu')
         }
-       
         if (this.curQuesNumber === this.quesList.length - 1) {
             // todo Answer completed
             alert('回答完成')

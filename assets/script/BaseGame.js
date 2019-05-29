@@ -7,9 +7,12 @@ cc.Class({
     gameConfig: { type: cc.JsonAsset, default: null },
     dataList: { type: cc.JsonAsset, default: null },
     datauRL: { type: String, default: '/json/game-question.json' },
+    audioManager: null,
+    currentNumber: 0,
+    // 私有变量
     _quesList: [],
     _curQues: null,
-
+    
     // audio 属性
     _curAudioId: -1
   },
@@ -40,9 +43,23 @@ cc.Class({
   getQuesList() {
     return this._quesList
   },
+  findQues(id = 0) {
+    if (id < this._quesList.length) {
+      return this._quesList[id]
+    }
+    return this._quesList[this.currentNumber]
+  },
   // 获取当前数据
   getCurQues() {
-    return this._curQues
+    return this._quesList[this.currentNumber]
+  },
+  nextQuest() {
+    if (this.currentNumber + 1 < this._quesList.length) {
+      this.currentNumber++
+      this._curQues = this._quesList[this.currentNumber]
+      return this._curQues
+    }
+    return null
   },
   /**
    * 播放音频
@@ -60,6 +77,33 @@ cc.Class({
     } else {
       cc.audioEngine.play(audio, loop)
     }
+  },
+
+  /**
+   * 播放远程音频
+   * @param {audioUrl} audio 
+   */
+  playAudioUrl(audio) {
+    let urlString = "https://om4y4iln5.qnssl.com/20070319_7053ea59d8c72cae65f0ODfWRZhfVBhP.wav";
+    let self = this
+    if (self.audioManager == null) {
+      console.error('audioManager emtpy')
+      return
+    }
+    cc.loader.load(audio, function (err, tex) {
+        if (err) {
+          console.error('load audio error')
+          return 
+        }
+        self.audioManager.playAudioClip(tex);
+    });
+  },
+
+  /**
+   * 停止所有播放
+   */
+  stopAudioAll() {
+    cc.audioEngine.stopAll();
   },
   /**
    * 加载图片
