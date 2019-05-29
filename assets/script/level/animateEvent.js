@@ -24,6 +24,10 @@ cc.Class({
             type: cc.AudioClip,
             default: null
         },
+        aufanu: {
+            type: cc.AudioClip,
+            default: null
+        }
     },
     start () { },
     audaijiEvent(audio) {

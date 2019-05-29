@@ -72,21 +72,23 @@ var Main = cc.Class({
 
     start() {
         // this._AnimateNode = this.answer_to.getComponent(cc.Animation)
-        console.log('anim', this._AnimateNode)
         this.initQuestion()
         let self = this
         // 拖动物体移动, 回答问题
         this.node.on('on-queset-move', event => {
             self._selectAns = event.target.name
             self.AnimateNode.play('chiing')
+            window._c_isClick = false
         })
 
         // 拖动物体开始
         this.node.on('on-queset-start', event => {
+            if (!window._c_isClick) return
             self.AnimateNode.play('zhangzui')
         })
         // 拖动物体结束
         this.node.on('on-queset-end', event => {
+            if (!window._c_isClick) return
             this.AnimateNode.play('daiji')
         })
         // 吃完了
@@ -110,9 +112,11 @@ var Main = cc.Class({
             self.AnimateNode.play('daiji')
             // this.AnimateNode.node.scale = 1.115
         })
+        
     },
 
     initQuestion(id = 0) {
+        window._c_isClick = true
         this.curQuestion = this.quesList[id]
         for (let index = 0; index < this.answerNode.length; index++) {
             this.answerNode[index].setPosition(this.answerPos[index])
@@ -206,6 +210,7 @@ var Main = cc.Class({
     },
 
     onPlayQuestion() {
+        if (!window._c_isClick) return
         this.gameNode.auBtnPlay()
         if (this.curQuestion) {
             let ques = this.curQuestion.question
@@ -218,9 +223,12 @@ var Main = cc.Class({
             }
         }
     },
+    onGameNext() {
+        this.gameNode.auBtnPlay()
+        this.nextQuest()
+    },
     onGameExit() {
         this.gameNode.auBtnPlay()
         cc.game.end()
     }
-    // update (dt) {},
 });

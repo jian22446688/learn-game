@@ -24,6 +24,10 @@ cc.Class({
         let originalVec2 = null
         let zindex = null
         this.node.on(cc.Node.EventType.TOUCH_START, function(event){
+            console.log('a', window._c_isClick)
+            if (!window._c_isClick) return
+            console.log('b', window._c_isClick)
+            
             isMove = true;
             originalVec2 = self.node.position
             zindex = self.node.zindex
@@ -33,7 +37,6 @@ cc.Class({
             // MOUSE_MOVE
             self.node.on(cc.Node.EventType.TOUCH_MOVE, function(event){
                 if (isMove) {
-                    console.log('x', event.getDelta().x)
                     self.node.x += event.getDelta().x
                     self.node.y += event.getDelta().y
                     let _selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
