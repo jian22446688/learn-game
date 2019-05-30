@@ -55,6 +55,10 @@ var Main = cc.Class({
             type: cc.Node,
             default: null
         },
+        rePlayPanel: {
+            type: cc.Node,
+            default: null
+        }
 
     },
 
@@ -89,34 +93,48 @@ var Main = cc.Class({
         // 拖动物体结束
         this.node.on('on-queset-end', event => {
             if (!window._c_isClick) return
-            this.AnimateNode.play('daiji')
+            self.AnimateNode.play('daiji')
         })
         // 吃完了
         this.node.on('on-anim-chiwan-end', event => {
-            // this._AnimateNode.play('daiji')
-            self.chiingEvent()
+            // self.chiingEvent()
+            self.AnimateNode.play('zhengque')
+            self.gameNode.auClipPlay(self.auZhengque)
         })
         // 吃完了
         this.node.on('on-anim-zhengque-end', event => {
-            // setTimeout(() => {
-            //     this.nextQuest()
-            // }, 1000)
             this.btn_next.active = true
             self.AnimateNode.play('daiji')
-            // this.AnimateNode.node.scale = 1.115
         })
         this.node.on('on-anim-cuowu-end', event => {
-            setTimeout(() => {
-                self.initQuestion(this.curQuesNumber)
-            }, 1000)
+            // setTimeout(() => {
+            //     self.initQuestion(this.curQuesNumber)
+            // }, 1000)
             self.AnimateNode.play('daiji')
-            // this.AnimateNode.node.scale = 1.115
+            window._c_isClick = true
         })
-        
+        this.node.on('on-move-zhengque-end', event => {
+            window._c_isClick = false
+            self.AnimateNode.play('chiing')
+        })
+        this.node.on('on-move-cuowu-end', event => {
+            window._c_isClick = false
+            self.gameNode.auClipPlay(self.auCuowu)
+            self.AnimateNode.play('cuowu')
+        })
+        this.node.on('on-move-complete-end', event => {
+            window._c_isClick = false
+            if (self.curQuesNumber === self.quesList.length - 1) {
+                // todo Answer completed
+                // alert('回答完成')
+                self.rePlayPanel.active = true
+            }
+        })
     },
 
     initQuestion(id = 0) {
         window._c_isClick = true
+        self.rePlayPanel.active = false
         this.curQuestion = this.quesList[id]
         for (let index = 0; index < this.answerNode.length; index++) {
             this.answerNode[index].setPosition(this.answerPos[index])
@@ -134,6 +152,7 @@ var Main = cc.Class({
         this.randomPos()
         this.randomPos()
         this.btn_next.active = false
+        this.curQuesNumber = id
     },
     chiingEvent() {
         let selectAns = this._selectAns
@@ -153,6 +172,7 @@ var Main = cc.Class({
         if (this.curQuesNumber === this.quesList.length - 1) {
             // todo Answer completed
             alert('回答完成')
+
         }
     },
     initQ() {
@@ -170,7 +190,9 @@ var Main = cc.Class({
             }
         }
     },
-
+    getCurQues() {
+        return this.curQuestion
+    },
     randomPos() {
         let rand = utils.getRandomNum(1, 3)
         this.answerPos.sort(utils.randomsort)
@@ -226,6 +248,10 @@ var Main = cc.Class({
     onGameNext() {
         this.gameNode.auBtnPlay()
         this.nextQuest()
+    },
+    onReplayGame() {
+        // 重新开始
+        this.initQuestion()
     },
     onGameExit() {
         this.gameNode.auBtnPlay()

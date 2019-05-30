@@ -4,6 +4,7 @@ cc.Class({
   extends: cc.Component,
   properties: {
     GameId: '001',
+    questLength: 3,
     gameConfig: { type: cc.JsonAsset, default: null },
     dataList: { type: cc.JsonAsset, default: null },
     datauRL: { type: String, default: '/json/game-question.json' },
@@ -36,6 +37,10 @@ cc.Class({
     // 初始化问题数据
     let gid = this.GameId
     this._quesList = qlist.filter(q => q.game_id == gid)
+    this.questLength
+    if (this._quesList.length >= this.questLength) {
+      this._quesList.length = this.questLength
+    }
   },
   start() { },
 

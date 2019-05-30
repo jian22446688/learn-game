@@ -10,12 +10,11 @@
 var Main = require('./Main')
 cc.Class({
     extends: cc.Component,
-    properties: { },
-    // LIFE-CYCLE CALLBACKS:
-    onLoad () {
-        
-    },
-
+    properties: {
+        _selfRect: null,
+        _curQues: null
+     },
+    onLoad () {},
     start () {
         var self = this;
         var isMove = false;
@@ -24,10 +23,8 @@ cc.Class({
         let originalVec2 = null
         let zindex = null
         this.node.on(cc.Node.EventType.TOUCH_START, function(event){
-            console.log('a', window._c_isClick)
             if (!window._c_isClick) return
-            console.log('b', window._c_isClick)
-            
+            this._curQues = Main._instance.getCurQues()
             isMove = true;
             originalVec2 = self.node.position
             zindex = self.node.zindex
@@ -39,28 +36,29 @@ cc.Class({
                 if (isMove) {
                     self.node.x += event.getDelta().x
                     self.node.y += event.getDelta().y
-                    let _selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
-                    if(rect_a.containsRect(_selfRect)) {
-                        isMove = false;
-                        self.node.zIndex = zindex
-                        let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
-                        self.node.dispatchEvent(btnsEvent);
-                        self.node.off(cc.Node.EventType.TOUCH_MOVE);
-                        self.node.active = false
-                    }
+                    self._selfRect = new cc.Rect(self.node.x, self.node.y, self.node.width, self.node.height)
+                    // if(rect_a.containsRect(self._selfRect)) {
+                    //     isMove = false;
+                    //     self.node.zIndex = zindex
+                    //     let btnsEvent =  new cc.Event.EventCustom('on-queset-move', true)
+                    //     self.node.dispatchEvent(btnsEvent);
+                    //     self.node.off(cc.Node.EventType.TOUCH_MOVE);
+                    //     self.node.active = false
+                    // }
                 }
                 event.stopPropagation();
             }, self.node)
         }, this.node)
-        this.node.on(cc.Node.EventType.TOUCH_END, ()=> {
+        this.node.on(cc.Node.EventType.TOUCH_END, (event)=> {
             if(isMove) {
                 // self.node.setPosition(originalVec2)
                 self.node.runAction(cc.moveTo(0.2, originalVec2))
                 self.node.zIndex = zindex;
+                isContainsRect(event)
             }
             isMove = false;
-            let btnsEvent =  new cc.Event.EventCustom('on-queset-end', true)
-            self.node.dispatchEvent(btnsEvent);
+            // let btnsEvent =  new cc.Event.EventCustom('on-queset-end', true)
+            // self.node.dispatchEvent(btnsEvent);
             self.node.off(cc.Node.EventType.TOUCH_MOVE);
         }, this.node)
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, ()=> {
@@ -68,11 +66,37 @@ cc.Class({
                 self.node.runAction(cc.moveTo(0.2, originalVec2))
                 // self.node.setPosition(originalVec2)
                 self.node.zIndex = zindex;
+                isContainsRect(event)
             }
             isMove = false;
-            let btnsEvent =  new cc.Event.EventCustom('on-queset-end', true)
-            self.node.dispatchEvent(btnsEvent);
+            // let btnsEvent =  new cc.Event.EventCustom('on-queset-end', true)
+            // self.node.dispatchEvent(btnsEvent);
             self.node.off(cc.Node.EventType.TOUCH_MOVE);
         }, this.node)
+
+        function isContainsRect(event) {
+            if (!window._c_isClick) return
+            let selectAns = event.target.name
+            selectAns = selectAns.substr(selectAns.lastIndexOf(), selectAns.length)
+            console.log('name', selectAns)
+            let answer = this.curQuestion.answer
+            self.node.zIndex = zindex
+            if (selectAns.toLowerCase() === answer.toLowerCase()) {
+                // todo Correct answer
+                console.log('回答正确')
+                if(rect_a.containsRect(self._selfRect)) {
+                    let btnsEvent = new cc.Event.EventCustom('on-move-zhengque-end', true)
+                    self.node.dispatchEvent(btnsEvent);
+                    self.node.active = false
+                }
+            } else {
+                // todo Error answer
+                self.node.runAction(cc.moveTo(0.2, originalVec2))
+                let btnsEvent = new cc.Event.EventCustom('on-move-cuowu-end', true)
+                self.node.dispatchEvent(btnsEvent);
+            }
+            let btnsEvent = new cc.Event.EventCustom('on-move-complete-end', true)
+            self.node.dispatchEvent(btnsEvent);
+        }
     }
 });
