@@ -103,8 +103,14 @@ var Main = cc.Class({
         })
         // 吃完了
         this.node.on('on-anim-zhengque-end', event => {
-            this.btn_next.active = true
+            self.btn_next.active = true
             self.AnimateNode.play('daiji')
+            if (self.curQuesNumber === self.quesList.length - 1) {
+                // todo Answer completed
+                // alert('回答完成')
+                self.rePlayPanel.active = true
+                self.btn_next.active = false
+            }
         })
         this.node.on('on-anim-cuowu-end', event => {
             // setTimeout(() => {
@@ -124,17 +130,13 @@ var Main = cc.Class({
         })
         this.node.on('on-move-complete-end', event => {
             window._c_isClick = false
-            if (self.curQuesNumber === self.quesList.length - 1) {
-                // todo Answer completed
-                // alert('回答完成')
-                self.rePlayPanel.active = true
-            }
+            
         })
     },
 
     initQuestion(id = 0) {
         window._c_isClick = true
-        self.rePlayPanel.active = false
+        this.rePlayPanel.active = false
         this.curQuestion = this.quesList[id]
         for (let index = 0; index < this.answerNode.length; index++) {
             this.answerNode[index].setPosition(this.answerPos[index])
@@ -233,7 +235,6 @@ var Main = cc.Class({
 
     onPlayQuestion() {
         if (!window._c_isClick) return
-        this.gameNode.auBtnPlay()
         if (this.curQuestion) {
             let ques = this.curQuestion.question
             if (this.curQuestion.question_type === 'audio') {
@@ -251,6 +252,7 @@ var Main = cc.Class({
     },
     onReplayGame() {
         // 重新开始
+        this.gameNode.auBtnPlay()
         this.initQuestion()
     },
     onGameExit() {

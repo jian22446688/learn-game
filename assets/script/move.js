@@ -24,7 +24,7 @@ cc.Class({
         let zindex = null
         this.node.on(cc.Node.EventType.TOUCH_START, function(event){
             if (!window._c_isClick) return
-            this._curQues = Main._instance.getCurQues()
+            self._curQues = Main._instance.getCurQues()
             isMove = true;
             originalVec2 = self.node.position
             zindex = self.node.zindex
@@ -52,7 +52,7 @@ cc.Class({
         this.node.on(cc.Node.EventType.TOUCH_END, (event)=> {
             if(isMove) {
                 // self.node.setPosition(originalVec2)
-                self.node.runAction(cc.moveTo(0.2, originalVec2))
+                // self.node.runAction(cc.moveTo(0.2, originalVec2))
                 self.node.zIndex = zindex;
                 isContainsRect(event)
             }
@@ -63,7 +63,7 @@ cc.Class({
         }, this.node)
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, ()=> {
             if(isMove){
-                self.node.runAction(cc.moveTo(0.2, originalVec2))
+                // self.node.runAction(cc.moveTo(0.2, originalVec2))
                 // self.node.setPosition(originalVec2)
                 self.node.zIndex = zindex;
                 isContainsRect(event)
@@ -76,27 +76,31 @@ cc.Class({
 
         function isContainsRect(event) {
             if (!window._c_isClick) return
-            let selectAns = event.target.name
-            selectAns = selectAns.substr(selectAns.lastIndexOf(), selectAns.length)
-            console.log('name', selectAns)
-            let answer = this.curQuestion.answer
+           
+            let answer = self._curQues.answer
             self.node.zIndex = zindex
-            if (selectAns.toLowerCase() === answer.toLowerCase()) {
-                // todo Correct answer
-                console.log('回答正确')
-                if(rect_a.containsRect(self._selfRect)) {
+            if(rect_a.containsRect(self._selfRect)) {
+                let selectAns = event.target.name
+                selectAns = selectAns.substr(selectAns.lastIndexOf(), selectAns.length)
+                if (selectAns.toLowerCase() === answer.toLowerCase()) {
+                    // todo Correct answer
                     let btnsEvent = new cc.Event.EventCustom('on-move-zhengque-end', true)
                     self.node.dispatchEvent(btnsEvent);
                     self.node.active = false
+                } else {
+                    // todo Error answer
+                    self.node.runAction(cc.moveTo(0.2, originalVec2))
+                    let btnsEvent = new cc.Event.EventCustom('on-move-cuowu-end', true)
+                    self.node.dispatchEvent(btnsEvent);
                 }
+                let btnsEvent = new cc.Event.EventCustom('on-move-complete-end', true)
+                self.node.dispatchEvent(btnsEvent);
             } else {
-                // todo Error answer
                 self.node.runAction(cc.moveTo(0.2, originalVec2))
-                let btnsEvent = new cc.Event.EventCustom('on-move-cuowu-end', true)
+                
+                let btnsEvent = new cc.Event.EventCustom('on-queset-end', true)
                 self.node.dispatchEvent(btnsEvent);
             }
-            let btnsEvent = new cc.Event.EventCustom('on-move-complete-end', true)
-            self.node.dispatchEvent(btnsEvent);
         }
     }
 });
