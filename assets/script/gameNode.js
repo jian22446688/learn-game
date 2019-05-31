@@ -104,6 +104,15 @@ var gameNode = cc.Class({
             }
             sprite.spriteFrame = spriteFrame
         });
+    },
+
+    // 解决刚开始不会播放音频
+    lateUpdate() {
+        let context = cc.sys.__audioSupport.context
+        if (context.state === 'suspended') {
+            context.resume()
+            console.log(context.state)
+        }
     }
 })
 

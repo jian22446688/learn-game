@@ -71,7 +71,7 @@ var Main = cc.Class({
         this.answer = this.answerNode.map(c => c.children[0].getComponent(cc.Sprite))
         this.answerPos = this.answerNode.map(c => JSON.parse(JSON.stringify(c.position)))
         // 初始化问题
-        this.quesList = this.gameNode.getQuesList()
+        this.getInitQuestion()
     },
 
     start() {
@@ -132,6 +132,10 @@ var Main = cc.Class({
             window._c_isClick = false
             
         })
+    },
+
+    getInitQuestion() {
+        this.quesList = this.gameNode.getQuesList()
     },
 
     initQuestion(id = 0) {
@@ -253,6 +257,7 @@ var Main = cc.Class({
     onReplayGame() {
         // 重新开始
         this.gameNode.auBtnPlay()
+        this.getInitQuestion()
         this.initQuestion()
     },
     onGameExit() {

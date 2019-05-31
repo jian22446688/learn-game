@@ -31,13 +31,12 @@ cc.Class({
     // };
     // xhr.open("GET", this.datauRL, true);
     // xhr.send();
-
+    
     // 本地获取
     let qlist = this.dataList.json
     // 初始化问题数据
     let gid = this.GameId
     this._quesList = qlist.filter(q => q.game_id == gid)
-    this.questLength
     if (this._quesList.length >= this.questLength) {
       this._quesList.length = this.questLength
     }
@@ -46,7 +45,9 @@ cc.Class({
 
   // 获取数据列表
   getQuesList() {
-    return this._quesList
+    let qarr = JSON.parse(JSON.stringify(this._quesList))
+    qarr.sort(() => Math.random()>.5 ? -1 : 1)
+    return qarr
   },
   findQues(id = 0) {
     if (id < this._quesList.length) {

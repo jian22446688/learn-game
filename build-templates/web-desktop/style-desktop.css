@@ -65,16 +65,15 @@ p.footer {
 }
 
 .progress-bar {
-    background-color: #1a1a1a;
+    background-color: #bfeafc;
     position: absolute;
     left: 50%;
     top: 80%;
-    height: 26px;
+    height: 16px;
     padding: 5px;
     width: 350px;
     margin: 0 -175px;         
-    border-radius: 5px;
-    box-shadow: 0 1px 0px #000 inset, 0 1px 0 #444;           
+    border-radius: 3px;       
 }
 
 .progress-bar span {
